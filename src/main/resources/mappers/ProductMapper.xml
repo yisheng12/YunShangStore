@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
-<mapper namespace="cn.tedu.store.mapper.ProductMapper">
+<mapper namespace="cn.fmz.store.mapper.ProductMapper">
 
 	<resultMap id="ProductEntityMap"
-			   type="cn.tedu.store.entity.Product">
+			   type="cn.fmz.store.entity.Product">
 		<id column="id" property="id"/>
 		<result column="category_id" property="categoryId"/>
 		<result column="item_type" property="itemType"/>

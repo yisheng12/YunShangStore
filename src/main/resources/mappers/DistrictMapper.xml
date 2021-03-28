@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
-<mapper namespace="cn.tedu.store.mapper.DistrictMapper">
+<mapper namespace="cn.fmz.store.mapper.DistrictMapper">
 
 	<!-- 根据省/市/区的代号查询详情 -->
 	<!-- District findByCode(String code) -->
 	<select id="findByCode"
-			resultType="cn.tedu.store.entity.District">
+			resultType="cn.fmz.store.entity.District">
 		SELECT
 			*
 		FROM
@@ -19,7 +19,7 @@
 	<!-- 获取全国所有省/某省所有市/某省所有区的列表 -->
 	<!-- List<District> findByParent(String parent) -->
 	<select id="findByParent"
-			resultType="cn.tedu.store.entity.District">
+			resultType="cn.fmz.store.entity.District">
 		SELECT
 			*
 		FROM
