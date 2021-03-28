@@ -37,7 +37,7 @@ public class UserMapperTests {
         User user = new User();
         user.setUid(uid);
         user.setPhone("13800138888");
-        // user.setEmail("root@tedu.cn");
+        // user.setEmail("root@fmz.cn");
         // user.setGender(1);
         user.setModifiedUser(modifiedUser);
         user.setModifiedTime(modifiedTime);

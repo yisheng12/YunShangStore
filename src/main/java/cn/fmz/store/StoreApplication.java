@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.unit.DataSize;
 
 @Configuration
-@MapperScan("cn.tedu.store.mapper")
+@MapperScan("cn.fmz.store.mapper")
 @SpringBootApplication
 public class StoreApplication {
 
