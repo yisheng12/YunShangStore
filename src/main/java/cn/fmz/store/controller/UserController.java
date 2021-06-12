@@ -38,8 +38,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping("login")
-    public JsonResult<User> login(String username,
-                                  String password, HttpSession session) {
+    public JsonResult<User> login(String username, String password, HttpSession session) {
         // 调用业务层对象执行登录
         User data = userService.login(username, password);
         // 将uid和username存入到session中
@@ -75,9 +74,7 @@ public class UserController extends BaseController {
     }
 
     @PostMapping("change_avatar")
-    public JsonResult<String> changeAvatar(
-            @RequestParam("file") MultipartFile file,
-            HttpSession session) {
+    public JsonResult<String> changeAvatar(@RequestParam("file") MultipartFile file, HttpSession session) {
         // 判断用户上传是否上传了头像文件，或头像文件是否有效
         if (file.isEmpty()) {
             throw new FileEmptyException("请选择需要上传的头像文件，并且，不可以使用空文件");

@@ -44,9 +44,7 @@ public class AddressController extends BaseController {
     }
 
     @RequestMapping("{aid}/set_default")
-    public JsonResult<Void> setDefault(
-            @PathVariable("aid") Integer aid,
-            HttpSession session) {
+    public JsonResult<Void> setDefault(@PathVariable("aid") Integer aid, HttpSession session) {
         // 从session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
@@ -57,9 +55,7 @@ public class AddressController extends BaseController {
     }
 
     @RequestMapping("{aid}/delete")
-    public JsonResult<Void> delete(
-            @PathVariable("aid") Integer aid,
-            HttpSession session) {
+    public JsonResult<Void> delete(@PathVariable("aid") Integer aid, HttpSession session) {
         // 从session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);

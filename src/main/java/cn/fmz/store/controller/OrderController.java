@@ -21,8 +21,7 @@ public class OrderController extends BaseController {
     private IOrderService orderService;
 
     @RequestMapping("create")
-    public JsonResult<Order> create(
-            Integer aid, Integer[] cids, HttpSession session) {
+    public JsonResult<Order> create(Integer aid, Integer[] cids, HttpSession session) {
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
         Order data = orderService.createOrder(aid, cids, uid, username);

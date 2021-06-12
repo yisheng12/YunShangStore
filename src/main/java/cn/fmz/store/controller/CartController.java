@@ -25,8 +25,7 @@ public class CartController extends BaseController {
     private ICartService cartService;
 
     @RequestMapping("add_to_cart")
-    public JsonResult<Void> addToCart(
-            Integer pid, Integer num, HttpSession session) {
+    public JsonResult<Void> addToCart(Integer pid, Integer num, HttpSession session) {
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
         cartService.addToCart(pid, num, uid, username);
@@ -41,9 +40,7 @@ public class CartController extends BaseController {
     }
 
     @RequestMapping("{cid}/add_num")
-    public JsonResult<Integer> addNum(
-            @PathVariable("cid") Integer cid,
-            HttpSession session) {
+    public JsonResult<Integer> addNum(@PathVariable("cid") Integer cid, HttpSession session) {
         // 从session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
