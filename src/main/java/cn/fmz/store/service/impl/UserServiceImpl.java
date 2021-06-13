@@ -3,9 +3,15 @@ package cn.fmz.store.service.impl;
 import cn.fmz.store.entity.User;
 import cn.fmz.store.mapper.UserMapper;
 import cn.fmz.store.service.IUserService;
-import cn.fmz.store.service.ex.*;
+import cn.fmz.store.service.ex.InsertException;
+import cn.fmz.store.service.ex.PasswordNotMatchException;
+import cn.fmz.store.service.ex.UpdateException;
+import cn.fmz.store.service.ex.UserNotFoundException;
+import cn.fmz.store.service.ex.UsernameDuplicateException;
 import cn.fmz.store.util.PassUtils;
 import org.apache.commons.codec.binary.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -18,6 +24,7 @@ import java.util.UUID;
  */
 @Service
 public class UserServiceImpl implements IUserService {
+    final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper;
@@ -26,11 +33,11 @@ public class UserServiceImpl implements IUserService {
     public void reg(User user) {
         // 根据参数user中的username查询用户数据
         String username = user.getUsername();
-        User result = userMapper.findByUsername(username);
-        System.err.println("user is " + user);
+        int result = userMapper.checkIfExistByUsername(username);
+        logger.info("UserServiceImpl.reg.result is {}", result);
 
-        // 判断查询结果是否不为null
-        if (!ObjectUtils.isEmpty(result)) {
+        // 判断用户是否存在
+        if (result > 0) {
             // 用户名已经被占用，不允许注册，抛出UsernameDuplicateException
             throw new UsernameDuplicateException("您尝试注册的用户名(" + username + ")已经被占用");
         }
@@ -46,11 +53,8 @@ public class UserServiceImpl implements IUserService {
         // 补全数据：isDelete
         user.setIsDelete(0);
         // 补全数据：4项日志
-        Date now = new Date();
         user.setCreatedUser(username);
-        user.setCreatedTime(now);
         user.setModifiedUser(username);
-        user.setModifiedTime(now);
         // 执行注册，获取返回的受影响的行数
         Integer rows = userMapper.insert(user);
         // 判断受影响的行数是否不为1
@@ -93,7 +97,7 @@ public class UserServiceImpl implements IUserService {
         user.setUsername(result.getUsername());
         user.setAvatar(result.getAvatar());
 
-        System.err.println("login.user is " + user);
+        logger.info("login.user is {}", user);
         // 返回结果
         return user;
     }

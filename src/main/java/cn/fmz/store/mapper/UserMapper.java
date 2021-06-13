@@ -72,6 +72,13 @@ public interface UserMapper {
      */
     User findByUid(Integer uid);
 
+    /**
+     * 根据用户名查询用户是否存在
+     *
+     * @param username 用户名
+     * @return 匹配的用户数据
+     */
+    Integer checkIfExistByUsername(String username);
 }
 
 

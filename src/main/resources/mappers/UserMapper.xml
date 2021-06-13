@@ -38,8 +38,8 @@
 			#{salt}, #{gender},
 			#{phone}, #{email},
 			#{avatar}, #{isDelete},
-			#{createdUser}, #{createdTime},
-			#{modifiedUser}, #{modifiedTime}
+			#{createdUser}, sysdate(),
+			#{modifiedUser}, sysdate()
 		)
 	</insert>
 
@@ -120,6 +120,15 @@
 			t_user
 		WHERE
 			uid=#{uid}
+	</select>
+
+	<select id="checkIfExistByUsername" resultType="Integer">
+		SELECT
+			count(1)
+		FROM
+			t_user
+		WHERE
+			username=#{username}
 	</select>
 
 </mapper>

@@ -1,12 +1,22 @@
 package cn.fmz.store.controller;
 
-import cn.fmz.store.controller.ex.*;
+import cn.fmz.store.controller.ex.FileEmptyException;
+import cn.fmz.store.controller.ex.FileIOException;
+import cn.fmz.store.controller.ex.FileSizeException;
+import cn.fmz.store.controller.ex.FileStateException;
+import cn.fmz.store.controller.ex.FileTypeException;
 import cn.fmz.store.entity.User;
 import cn.fmz.store.service.IUserService;
 import cn.fmz.store.util.JsonResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
@@ -18,6 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping("users")
 public class UserController extends BaseController {
+    final static Logger logger = LoggerFactory.getLogger(UserController.class);
+
     /**
      * 上传的头像的最大大小
      */
@@ -37,6 +49,7 @@ public class UserController extends BaseController {
 
     @PostMapping("reg")
     public JsonResult<Void> reg(User user) {
+        logger.info("UserController.reg.user is {}", user);
         userService.reg(user);
         return new JsonResult<>(SUCCESS);
     }
