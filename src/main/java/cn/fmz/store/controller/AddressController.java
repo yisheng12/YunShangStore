@@ -1,18 +1,16 @@
 package cn.fmz.store.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
+import cn.fmz.store.entity.Address;
 import cn.fmz.store.service.IAddressService;
+import cn.fmz.store.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.fmz.store.entity.Address;
-import cn.fmz.store.util.JsonResult;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequestMapping("addresses")
@@ -22,8 +20,7 @@ public class AddressController extends BaseController {
     private IAddressService addressService;
 
     @RequestMapping("addnew")
-    public JsonResult<Void> addnew(
-            Address address, HttpSession session) {
+    public JsonResult<Void> addNew(Address address, HttpSession session) {
         // 从session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);

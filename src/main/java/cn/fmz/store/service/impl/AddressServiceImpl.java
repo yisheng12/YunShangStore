@@ -1,24 +1,19 @@
 package cn.fmz.store.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import cn.fmz.store.entity.Address;
+import cn.fmz.store.entity.District;
 import cn.fmz.store.mapper.AddressMapper;
 import cn.fmz.store.service.IAddressService;
+import cn.fmz.store.service.IDistrictService;
+import cn.fmz.store.service.ex.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
-import cn.fmz.store.entity.Address;
-import cn.fmz.store.entity.District;
-import cn.fmz.store.service.IDistrictService;
-import cn.fmz.store.service.ex.AccessDeniedException;
-import cn.fmz.store.service.ex.AddressCountLimitException;
-import cn.fmz.store.service.ex.AddressNotFoundException;
-import cn.fmz.store.service.ex.DeleteException;
-import cn.fmz.store.service.ex.InsertException;
-import cn.fmz.store.service.ex.UpdateException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 处理收货地址数据的业务层实现类
@@ -41,8 +36,7 @@ public class AddressServiceImpl implements IAddressService {
         // 判断数量是否达到上限(>=5)
         if (count >= maxCount) {
             // 是：抛出AddressCountLimitException
-            throw new AddressCountLimitException(
-                    "收货地址数量已经达到上限(" + maxCount + ")");
+            throw new AddressCountLimitException("收货地址数量已经达到上限(" + maxCount + ")");
         }
 
         // 判断数量是否为0
@@ -55,12 +49,9 @@ public class AddressServiceImpl implements IAddressService {
         // 补全数据：is_default
         address.setIsDefault(isDefault);
         // 补全数据：省/市/区的名称
-        String provinceName = getDistrictName(address.getProvinceCode());
-        String cityName = getDistrictName(address.getCityCode());
-        String areaName = getDistrictName(address.getAreaCode());
-        address.setProvinceName(provinceName);
-        address.setCityName(cityName);
-        address.setAreaName(areaName);
+        address.setProvinceName(getDistrictName(address.getProvinceCode()));
+        address.setCityName(getDistrictName(address.getCityCode()));
+        address.setAreaName(getDistrictName(address.getAreaCode()));
         // 补全数据：4项日志
         Date now = new Date();
         address.setCreatedUser(username);
@@ -94,10 +85,9 @@ public class AddressServiceImpl implements IAddressService {
         // 根据参数aid查询收货地址数据
         Address result = findByAid(aid);
         // 判断查询结果是否为null
-        if (result == null) {
+        if (ObjectUtils.isEmpty(result)) {
             // 是：AddressNotFoundException
-            throw new AddressNotFoundException(
-                    "尝试访问的收货地址数据不存在");
+            throw new AddressNotFoundException("尝试访问的收货地址数据不存在");
         }
 
         // 判断查询结果中的uid与参数uid是否不一致(使用equals)
@@ -119,24 +109,22 @@ public class AddressServiceImpl implements IAddressService {
         // 根据参数aid查询收货地址数据
         Address result = findByAid(aid);
         // 判断查询结果是否为null
-        if (result == null) {
+        if (ObjectUtils.isEmpty(result)) {
             // 是：AddressNotFoundException
-            throw new AddressNotFoundException(
-                    "尝试访问的收货地址数据不存在");
+            throw new AddressNotFoundException("尝试访问的收货地址数据不存在");
         }
 
         // 判断查询结果中的uid与参数uid是否不一致
         if (!result.getUid().equals(uid)) {
             // 是：AccessDeniedException
-            throw new AccessDeniedException(
-                    "非法访问");
+            throw new AccessDeniedException("非法访问");
         }
 
         // 执行删除，获取返回的受影响行数
         deleteByAid(aid);
 
         // 判断查询结果中的is_defalut是否不为1
-        if (!result.getIsDefault().equals(1)) {
+        if (1 != result.getIsDefault()) {
             return;
         }
 
@@ -148,15 +136,15 @@ public class AddressServiceImpl implements IAddressService {
         // }
 
         // 则才删除的是默认收货地址，则找出最近修改的那一条收货地址
-        Address lastModifed = findLastModified(uid);
+        Address lastModified = findLastModified(uid);
         // 判断是否还能找到数据
-        if (lastModifed == null) {
+        if (lastModified == null) {
             // 没有找到，则没有更多数据了，直接结束
             return;
         }
 
         // 取出最近修改的收货地址的id
-        Integer lastModifiedAid = lastModifed.getAid();
+        Integer lastModifiedAid = lastModified.getAid();
         // 将这条收货地址设置为默认，并获取返回的受影响行数
         updateDefault(lastModifiedAid, username, new Date());
     }
@@ -164,9 +152,8 @@ public class AddressServiceImpl implements IAddressService {
     @Override
     public Address getByAid(Integer aid) {
         Address result = findByAid(aid);
-        if (result == null) {
-            throw new AddressNotFoundException(
-                    "尝试访问的收货地址数据不存在");
+        if (ObjectUtils.isEmpty(result)) {
+            throw new AddressNotFoundException("尝试访问的收货地址数据不存在");
         }
 
         result.setCreatedUser(null);
@@ -274,8 +261,7 @@ public class AddressServiceImpl implements IAddressService {
         if (aid == null) {
             return null;
         }
-        Address result = addressMapper.findByAid(aid);
-        return result;
+        return addressMapper.findByAid(aid);
     }
 
     /**

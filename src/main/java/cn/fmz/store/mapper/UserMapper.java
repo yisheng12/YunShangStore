@@ -1,10 +1,9 @@
 package cn.fmz.store.mapper;
 
-import java.util.Date;
-
+import cn.fmz.store.entity.User;
 import org.apache.ibatis.annotations.Param;
 
-import cn.fmz.store.entity.User;
+import java.util.Date;
 
 /**
  * 处理用户数据的持久层接口
@@ -68,7 +67,7 @@ public interface UserMapper {
     /**
      * 根据用户id查询用户数据详情
      *
-     * @param id 用户id
+     * @param uid 用户id
      * @return 匹配的用户数据详情，如果没有匹配的数据，则返回null
      */
     User findByUid(Integer uid);

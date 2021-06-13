@@ -1,32 +1,36 @@
 package cn.fmz.store.controller;
 
+import cn.fmz.store.controller.ex.*;
+import cn.fmz.store.entity.User;
+import cn.fmz.store.service.IUserService;
+import cn.fmz.store.util.JsonResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import cn.fmz.store.controller.ex.FileEmptyException;
-import cn.fmz.store.controller.ex.FileIOException;
-import cn.fmz.store.controller.ex.FileSizeException;
-import cn.fmz.store.controller.ex.FileStateException;
-import cn.fmz.store.controller.ex.FileTypeException;
-import cn.fmz.store.entity.User;
-import cn.fmz.store.service.IUserService;
-import cn.fmz.store.util.JsonResult;
-
 @RestController
 @RequestMapping("users")
 public class UserController extends BaseController {
+    /**
+     * 上传的头像的最大大小
+     */
+    public static final int AVATAR_MAX_SIZE = 700 * 1024;
+    /**
+     * 允许上传的头像文件的类型
+     */
+    public static final List<String> AVATAR_CONTENT_TYPES = new ArrayList<>();
+
+    static {
+        AVATAR_CONTENT_TYPES.add("image/jpeg");
+        AVATAR_CONTENT_TYPES.add("image/png");
+    }
 
     @Autowired
     private IUserService userService;
@@ -59,31 +63,16 @@ public class UserController extends BaseController {
         return new JsonResult<>(SUCCESS);
     }
 
-    /**
-     * 上传的头像的最大大小
-     */
-    public static final int AVATAR_MAX_SIZE = 700 * 1024;
-    /**
-     * 允许上传的头像文件的类型
-     */
-    public static final List<String> AVATAR_CONTENT_TYPES = new ArrayList<>();
-
-    static {
-        AVATAR_CONTENT_TYPES.add("image/jpeg");
-        AVATAR_CONTENT_TYPES.add("image/png");
-    }
-
     @PostMapping("change_avatar")
     public JsonResult<String> changeAvatar(@RequestParam("file") MultipartFile file, HttpSession session) {
         // 判断用户上传是否上传了头像文件，或头像文件是否有效
-        if (file.isEmpty()) {
+        if (ObjectUtils.isEmpty(file)) {
             throw new FileEmptyException("请选择需要上传的头像文件，并且，不可以使用空文件");
         }
 
         // 判断头像文件的大小是否超标
         if (file.getSize() > AVATAR_MAX_SIZE) {
-            throw new FileSizeException(
-                    "不可以使用超过" + AVATAR_MAX_SIZE / 1024 + "KB的头像文件");
+            throw new FileSizeException( "不可以使用超过" + AVATAR_MAX_SIZE / 1024 + "KB的头像文件");
         }
 
         // 判断上传的文件类型是否超标
@@ -100,6 +89,7 @@ public class UserController extends BaseController {
         File parent = new File(pathname);
         // 确保文件夹是存在的
         if (!parent.exists()) {
+            // 不存在则创建
             parent.mkdirs();
         }
 
@@ -120,11 +110,9 @@ public class UserController extends BaseController {
         try {
             file.transferTo(dest);
         } catch (IllegalStateException e) {
-            throw new FileStateException(
-                    "文件可能已经被移动，无法访问文件的数据");
+            throw new FileStateException("文件可能已经被移动，无法访问文件的数据");
         } catch (IOException e) {
-            throw new FileIOException(
-                    "读写数据时出现错误");
+            throw new FileIOException("读写数据时出现错误");
         }
 
         // 将头像更新到数据库中
